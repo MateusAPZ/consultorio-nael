@@ -1,0 +1,447 @@
+export const initialData = {
+  pacientes: [
+    {
+      id: "pac_1",
+      nome: "João Carlos Silva",
+      cpf: "123.456.789-00",
+      telefone: "(11) 98765-4321",
+      email: "joao.silva@email.com",
+      dataNascimento: "1988-04-15",
+      endereco: "Rua das Flores, 120 - Apto 32 - São Paulo/SP",
+      convenio: "Unimed Odonto",
+      anamnese: {
+        alergias: "Penicilina, Dipirona",
+        doencasSistemicas: "Nenhuma",
+        medicacoesEmUso: "Nenhuma de uso contínuo",
+        fumante: false,
+        sangramentoGengival: true,
+        hipertenso: false,
+        diabetico: false,
+        observacoesMedicas: "Paciente relata sensibilidade no quadrante superior esquerdo ao ingerir líquidos frios."
+      },
+      odontograma: {
+        "16": { status: "restaurado", nota: "Restauração oclusal em resina composta feita em 2024" },
+        "21": { status: "canal", nota: "Tratamento endodôntico concluído, aguarda coroa estética" },
+        "26": { status: "carie", nota: "Lesão cariosa na face mesial detectada na avaliação" },
+        "36": { status: "higido", nota: "Saudável" },
+        "46": { status: "restaurado", nota: "Restauração em resina ocluso-distal" }
+      },
+      evolucoes: [
+        {
+          id: "evo_1",
+          data: "2026-09-24",
+          hora: "09:30",
+          dente: "Arcada Completa",
+          procedimento: "Profilaxia e Raspagem Supragengival",
+          descricao: "Realizada remoção de cálculo dentário anterior inferior com ultrassom e jato de bicarbonato. Aplicação tópica de flúor.",
+          profissional: "Dr. Nael Santos",
+          valor: 220.00
+        },
+        {
+          id: "evo_2",
+          data: "2026-09-10",
+          hora: "14:15",
+          dente: "21",
+          procedimento: "Finalização de Canal (Endodontia)",
+          descricao: "Obturação dos condutos com cones de guta-percha e cimento endodôntico. Curativo provisório com Ionômero de Vidro.",
+          profissional: "Dr. Nael Santos",
+          valor: 650.00
+        }
+      ],
+      criadoEm: "2026-08-01"
+    },
+    {
+      id: "pac_2",
+      nome: "Mariana Costa Ribeiro",
+      cpf: "234.567.890-11",
+      telefone: "(11) 97654-3210",
+      email: "mariana.ribeiro@email.com",
+      dataNascimento: "1997-08-22",
+      endereco: "Av. Paulista, 1500 - Bela Vista - São Paulo/SP",
+      convenio: "Particular",
+      anamnese: {
+        alergias: "Nenhuma",
+        doencasSistemicas: "Nenhuma",
+        medicacoesEmUso: "Anticoncepcional",
+        fumante: false,
+        sangramentoGengival: false,
+        hipertenso: false,
+        diabetico: false,
+        observacoesMedicas: "Em tratamento ortodôntico fixo há 8 meses."
+      },
+      odontograma: {
+        "11": { status: "aparelho", nota: "Braquete cerâmico ativo" },
+        "21": { status: "aparelho", nota: "Braquete cerâmico ativo" },
+        "14": { status: "higido", nota: "Higido" },
+        "24": { status: "higido", nota: "Higido" },
+        "36": { status: "restaurado", nota: "Restauração oclusal ocluso-vestibular" },
+        "46": { status: "higido", nota: "Higido" }
+      },
+      evolucoes: [
+        {
+          id: "evo_3",
+          data: "2026-09-24",
+          hora: "10:45",
+          dente: "Ambas as arcadas",
+          procedimento: "Manutenção Ortodôntica Mensal",
+          descricao: "Troca dos arcos superior e inferior por arcos de aço 0.016. Troca das borrachinhas e colocação de elásticos intermaxilares.",
+          profissional: "Dr. Nael Santos",
+          valor: 180.00
+        }
+      ],
+      criadoEm: "2026-01-15"
+    },
+    {
+      id: "pac_3",
+      nome: "Ricardo Mendonça",
+      cpf: "345.678.901-22",
+      telefone: "(11) 99123-8877",
+      email: "ricardo.mendonca@empresa.com",
+      dataNascimento: "1981-11-03",
+      endereco: "Rua Vergueiro, 2500 - Vila Mariana - São Paulo/SP",
+      convenio: "Bradesco Dental",
+      anamnese: {
+        alergias: "Nenhuma conhecida",
+        doencasSistemicas: "Hipertensão Arterial controlada",
+        medicacoesEmUso: "Losartana 50mg/dia",
+        fumante: false,
+        sangramentoGengival: false,
+        hipertenso: true,
+        diabetico: false,
+        observacoesMedicas: "Aferir PA antes de procedimentos cirúrgicos ou anestésicos."
+      },
+      odontograma: {
+        "46": { status: "implante", nota: "Implante de titânio osseointegrado, pronto para instalação da coroa cerâmica" },
+        "17": { status: "restaurado", nota: "Restauração amálgama antiga estável" },
+        "27": { status: "higido", nota: "Saudável" }
+      },
+      evolucoes: [
+        {
+          id: "evo_4",
+          data: "2026-08-15",
+          hora: "11:00",
+          dente: "46",
+          procedimento: "Moldagem para Prótese sobre Implante",
+          descricao: "Transferência de implante realizada com moldeira aberta e poliéter. Prova do intermediário protético bem adaptada.",
+          profissional: "Dr. Nael Santos",
+          valor: 1200.00
+        }
+      ],
+      criadoEm: "2026-05-10"
+    },
+    {
+      id: "pac_4",
+      nome: "Beatriz Alves dos Santos",
+      cpf: "456.789.012-33",
+      telefone: "(11) 98833-2211",
+      email: "bia.santos@email.com",
+      dataNascimento: "1994-03-12",
+      endereco: "Alameda Santos, 980 - Jardins - São Paulo/SP",
+      convenio: "Particular",
+      anamnese: {
+        alergias: "Anti-inflamatórios não esteroidais (AINEs)",
+        doencasSistemicas: "Nenhuma",
+        medicacoesEmUso: "Nenhuma",
+        fumante: false,
+        sangramentoGengival: false,
+        hipertenso: false,
+        diabetico: false,
+        observacoesMedicas: "Atenção: NÃO prescrever Ibuprofeno, Cetoprofeno ou Nimesulida."
+      },
+      odontograma: {
+        "11": { status: "restaurado", nota: "Facetas em resina composta estratificada" },
+        "21": { status: "restaurado", nota: "Facetas em resina composta estratificada" },
+        "25": { status: "carie", nota: "Cárie oclusal pequena programada para hoje" }
+      },
+      evolucoes: [
+        {
+          id: "evo_5",
+          data: "2026-09-02",
+          hora: "16:00",
+          dente: "11, 21",
+          procedimento: "Facetas Estéticas em Resina",
+          descricao: "Estratificação anatômica em resina de alto polimento, fechamento de diastema anterior com excelente resultado cosmético.",
+          profissional: "Dr. Nael Santos",
+          valor: 700.00
+        }
+      ],
+      criadoEm: "2026-07-20"
+    },
+    {
+      id: "pac_5",
+      nome: "Lucas Ferreira Lima",
+      cpf: "567.890.123-44",
+      telefone: "(11) 99887-1122",
+      email: "lucas.lima@tech.com",
+      dataNascimento: "2002-09-30",
+      endereco: "Rua Augusta, 430 - Consolação - São Paulo/SP",
+      convenio: "Amil Dental",
+      anamnese: {
+        alergias: "Nenhuma",
+        doencasSistemicas: "Nenhuma",
+        medicacoesEmUso: "Nenhuma",
+        fumante: true,
+        sangramentoGengival: true,
+        hipertenso: false,
+        diabetico: false,
+        observacoesMedicas: "Queixa de dor e inchaço na região retromolar inferior esquerda (pericoronarite)."
+      },
+      odontograma: {
+        "38": { status: "extracao", nota: "Siso semi-incluso com indicação de exodontia urgente" },
+        "48": { status: "extracao", nota: "Siso incluso impactado" },
+        "18": { status: "higido", nota: "Siso erupcionado" },
+        "28": { status: "higido", nota: "Siso erupcionado" }
+      },
+      evolucoes: [],
+      criadoEm: "2026-09-20"
+    },
+    {
+      id: "pac_6",
+      nome: "Fernanda Guimarães",
+      cpf: "678.901.234-55",
+      telefone: "(11) 98111-4455",
+      email: "fernanda.guimaraes@uol.com.br",
+      dataNascimento: "1974-12-05",
+      endereco: "Rua Pamplona, 670 - Jardim Paulista - São Paulo/SP",
+      convenio: "Particular",
+      anamnese: {
+        alergias: "Iodo",
+        doencasSistemicas: "Hipotireoidismo",
+        medicacoesEmUso: "Levotiroxina 75mcg",
+        fumante: false,
+        sangramentoGengival: false,
+        hipertenso: false,
+        diabetico: false,
+        observacoesMedicas: "Paciente busca clareamento dental e revisão de prótese posterior."
+      },
+      odontograma: {
+        "36": { status: "restaurado", nota: "Coroa cerâmica sobre núcleo metálico" },
+        "11": { status: "higido", nota: "Higido" },
+        "12": { status: "higido", nota: "Higido" },
+        "21": { status: "higido", nota: "Higido" },
+        "22": { status: "higido", nota: "Higido" }
+      },
+      evolucoes: [
+        {
+          id: "evo_6",
+          data: "2026-09-08",
+          hora: "10:00",
+          dente: "Arcada Completa",
+          procedimento: "Clareamento Dental de Consultório",
+          descricao: "Sessão 1 de clareamento com Peróxido de Hidrogênio 35% fotoativado por LED. Protetor gengival fotopolimerizado aplicado.",
+          profissional: "Dr. Nael Santos",
+          valor: 850.00
+        }
+      ],
+      criadoEm: "2026-08-15"
+    }
+  ],
+
+  agendamentos: [
+    {
+      id: "age_1",
+      pacienteId: "pac_1",
+      pacienteNome: "João Carlos Silva",
+      pacienteTelefone: "(11) 98765-4321",
+      data: "2026-09-24",
+      horaInicio: "09:00",
+      horaFim: "10:00",
+      procedimento: "Profilaxia e Raspagem Supragengival",
+      dentista: "Dr. Nael Santos",
+      status: "concluido",
+      observacoes: "Paciente chegou no horário, procedimento realizado com sucesso.",
+      valorEstimado: 220.00
+    },
+    {
+      id: "age_2",
+      pacienteId: "pac_2",
+      pacienteNome: "Mariana Costa Ribeiro",
+      pacienteTelefone: "(11) 97654-3210",
+      data: "2026-09-24",
+      horaInicio: "10:30",
+      horaFim: "11:15",
+      procedimento: "Manutenção Ortodôntica",
+      dentista: "Dr. Nael Santos",
+      status: "concluido",
+      observacoes: "Troca de ligaduras e arcos.",
+      valorEstimado: 180.00
+    },
+    {
+      id: "age_3",
+      pacienteId: "pac_3",
+      pacienteNome: "Ricardo Mendonça",
+      pacienteTelefone: "(11) 99123-8877",
+      data: "2026-09-24",
+      horaInicio: "14:00",
+      horaFim: "15:00",
+      procedimento: "Instalação de Coroa s/ Implante 46",
+      dentista: "Dr. Nael Santos",
+      status: "confirmado",
+      observacoes: "Coroa chegou do laboratório de prótese, ajuste oclusal necessário.",
+      valorEstimado: 1200.00
+    },
+    {
+      id: "age_4",
+      pacienteId: "pac_4",
+      pacienteNome: "Beatriz Alves dos Santos",
+      pacienteTelefone: "(11) 98833-2211",
+      data: "2026-09-24",
+      horaInicio: "15:30",
+      horaFim: "16:30",
+      procedimento: "Restauração Resina Dente 25",
+      dentista: "Dr. Nael Santos",
+      status: "confirmado",
+      observacoes: "Lembrar: paciente alérgica a AINEs.",
+      valorEstimado: 250.00
+    },
+    {
+      id: "age_5",
+      pacienteId: "pac_5",
+      pacienteNome: "Lucas Ferreira Lima",
+      pacienteTelefone: "(11) 99887-1122",
+      data: "2026-09-24",
+      horaInicio: "17:00",
+      horaFim: "17:45",
+      procedimento: "Avaliação Cirúrgica Sisos",
+      dentista: "Dr. Nael Santos",
+      status: "agendado",
+      observacoes: "Trazer radiografia panorâmica recente.",
+      valorEstimado: 150.00
+    },
+    {
+      id: "age_6",
+      pacienteId: "pac_6",
+      pacienteNome: "Fernanda Guimarães",
+      pacienteTelefone: "(11) 98111-4455",
+      data: "2026-09-25",
+      horaInicio: "10:00",
+      horaFim: "11:00",
+      procedimento: "Segunda Sessão de Clareamento",
+      dentista: "Dr. Nael Santos",
+      status: "confirmado",
+      observacoes: "Verificar sensibilidade residual da primeira sessão.",
+      valorEstimado: 450.00
+    },
+    {
+      id: "age_7",
+      pacienteId: "pac_1",
+      pacienteNome: "João Carlos Silva",
+      pacienteTelefone: "(11) 98765-4321",
+      data: "2026-09-28",
+      horaInicio: "14:30",
+      horaFim: "15:30",
+      procedimento: "Restauração Dente 26",
+      dentista: "Dr. Nael Santos",
+      status: "agendado",
+      observacoes: "Tratar cárie mesial.",
+      valorEstimado: 280.00
+    }
+  ],
+
+  pagamentos: [
+    {
+      id: "pag_1",
+      pacienteId: "pac_1",
+      pacienteNome: "João Carlos Silva",
+      agendamentoId: "age_1",
+      descricao: "Profilaxia e Raspagem Supragengival",
+      valor: 220.00,
+      dataVencimento: "2026-09-24",
+      dataPagamento: "2026-09-24",
+      status: "pago",
+      formaPagamento: "cartao_debito",
+      observacoes: "Pago na recepção após a consulta."
+    },
+    {
+      id: "pag_2",
+      pacienteId: "pac_2",
+      pacienteNome: "Mariana Costa Ribeiro",
+      agendamentoId: "age_2",
+      descricao: "Manutenção Ortodôntica Mensal",
+      valor: 180.00,
+      dataVencimento: "2026-09-24",
+      dataPagamento: "2026-09-24",
+      status: "pago",
+      formaPagamento: "pix",
+      observacoes: "Comprovante Pix recebido via WhatsApp."
+    },
+    {
+      id: "pag_3",
+      pacienteId: "pac_4",
+      pacienteNome: "Beatriz Alves dos Santos",
+      agendamentoId: null,
+      descricao: "Facetas Estéticas em Resina (Entrada)",
+      valor: 700.00,
+      dataVencimento: "2026-09-02",
+      dataPagamento: "2026-09-02",
+      status: "pago",
+      formaPagamento: "cartao_credito",
+      observacoes: "Parcelado em 2x."
+    },
+    {
+      id: "pag_4",
+      pacienteId: "pac_3",
+      pacienteNome: "Ricardo Mendonça",
+      agendamentoId: "age_3",
+      descricao: "Instalação de Coroa Cerâmica s/ Implante 46",
+      valor: 1200.00,
+      dataVencimento: "2026-09-25",
+      dataPagamento: null,
+      status: "pendente",
+      formaPagamento: null,
+      observacoes: "Combinado acerto no dia da consulta ou no dia seguinte."
+    },
+    {
+      id: "pag_5",
+      pacienteId: "pac_5",
+      pacienteNome: "Lucas Ferreira Lima",
+      agendamentoId: "age_5",
+      descricao: "Consulta de Avaliação e Planejamento Cirúrgico",
+      valor: 150.00,
+      dataVencimento: "2026-09-26",
+      dataPagamento: null,
+      status: "pendente",
+      formaPagamento: null,
+      observacoes: "Aguardando consulta."
+    },
+    {
+      id: "pag_6",
+      pacienteId: "pac_6",
+      pacienteNome: "Fernanda Guimarães",
+      agendamentoId: null,
+      descricao: "Tratamento de Clareamento Dental Completo",
+      valor: 850.00,
+      dataVencimento: "2026-09-12",
+      dataPagamento: null,
+      status: "atrasado",
+      formaPagamento: null,
+      observacoes: "Vencimento venceu há 12 dias. Secretária enviou lembrete via WhatsApp ontem."
+    },
+    {
+      id: "pag_7",
+      pacienteId: "pac_1",
+      pacienteNome: "João Carlos Silva",
+      agendamentoId: null,
+      descricao: "Tratamento Endodôntico (Canal Dente 21) - Parcela 2",
+      valor: 450.00,
+      dataVencimento: "2026-09-18",
+      dataPagamento: null,
+      status: "atrasado",
+      formaPagamento: null,
+      observacoes: "Atrasado há 6 dias. Paciente avisou que pagará na próxima visita."
+    },
+    {
+      id: "pag_8",
+      pacienteId: "pac_4",
+      pacienteNome: "Beatriz Alves dos Santos",
+      agendamentoId: "age_4",
+      descricao: "Restauração Resina Dente 25",
+      valor: 250.00,
+      dataVencimento: "2026-09-24",
+      dataPagamento: null,
+      status: "pendente",
+      formaPagamento: null,
+      observacoes: "Cobrança gerada para a consulta de hoje."
+    }
+  ]
+};

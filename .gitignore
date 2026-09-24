@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+client/node_modules/
+
+# Production build (we can let render build it or include it)
+# client/dist/
+
+# Environment Variables
+.env
+.env.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System files
+.DS_Store
+Thumbs.db

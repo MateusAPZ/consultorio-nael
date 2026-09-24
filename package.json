@@ -1,0 +1,29 @@
+{
+  "name": "sistema-nael",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "server": "node server/server.js",
+    "client": "npm --prefix client run dev",
+    "build": "npm --prefix client install && npm --prefix client run build",
+    "start": "node server/server.js"
+  },
+  "keywords": [
+    "odontologia",
+    "prontuario",
+    "agenda",
+    "financeiro"
+  ],
+  "author": "Dr. Nael Odontologia",
+  "license": "ISC",
+  "description": "Sistema de Gestão Odontológica para Consultório Dentário - Prontuários, Agenda e Financeiro",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1",
+    "mongodb": "^7.6.0",
+    "morgan": "^1.12.1",
+    "pg": "^8.23.0"
+  }
+}
