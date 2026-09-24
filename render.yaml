@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: consultorio-dr-nael
+    env: node
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: PORT
+        value: 5000
