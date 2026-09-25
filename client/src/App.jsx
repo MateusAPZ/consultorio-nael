@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Calendar, Users, DollarSign, LayoutDashboard, 
   Plus, AlertTriangle, ShieldCheck, HeartPulse, Sparkles,
-  Menu, X, CheckCircle2, ChevronRight, Phone
+  Menu, X, CheckCircle2, ChevronRight, Phone, LogOut
 } from 'lucide-react';
+import LoginPage from './components/LoginPage';
 import DashboardView from './components/DashboardView';
 import AgendaView from './components/AgendaView';
 import PacientesView from './components/PacientesView';
@@ -15,6 +16,16 @@ import ModalNovoPagamento from './components/ModalNovoPagamento';
 import { api } from './services/api';
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    try {
+      const savedUser = localStorage.getItem('drnael_auth_user');
+      const savedToken = localStorage.getItem('drnael_auth_token');
+      return savedUser && savedToken ? JSON.parse(savedUser) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedPacienteId, setSelectedPacienteId] = useState(null);
   const [stats, setStats] = useState(null);
@@ -27,6 +38,12 @@ export default function App() {
   const [isNovoAgendamentoOpen, setIsNovoAgendamentoOpen] = useState(false);
   const [isNovoPagamentoOpen, setIsNovoPagamentoOpen] = useState(false);
   const [defaultPacienteId, setDefaultPacienteId] = useState('');
+
+  const handleLogout = () => {
+    localStorage.removeItem('drnael_auth_token');
+    localStorage.removeItem('drnael_auth_user');
+    setUser(null);
+  };
 
   const loadInitialData = async () => {
     try {
@@ -45,8 +62,14 @@ export default function App() {
   };
 
   useEffect(() => {
-    loadInitialData();
-  }, []);
+    if (user) {
+      loadInitialData();
+    }
+  }, [user]);
+
+  if (!user) {
+    return <LoginPage onLoginSuccess={(loggedUser) => setUser(loggedUser)} />;
+  }
 
   const handleSelectPaciente = (pacienteId) => {
     setSelectedPacienteId(pacienteId);
@@ -216,6 +239,16 @@ export default function App() {
           >
             <span>💾 Fazer Backup (Download)</span>
           </a>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex items-center justify-center gap-2 w-full py-2 px-3 rounded-xl bg-rose-950/20 hover:bg-rose-900/40 text-rose-300 hover:text-rose-200 text-xs font-semibold border border-rose-900/40 transition-colors cursor-pointer"
+            title="Encerrar sessão"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span>Sair do Sistema</span>
+          </button>
         </div>
       </aside>
 
@@ -239,6 +272,13 @@ export default function App() {
               className="p-1.5 rounded-lg bg-sky-600 text-white text-xs font-bold"
             >
               + Consulta
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 transition-colors"
+              title="Sair do Sistema"
+            >
+              <LogOut className="w-5 h-5" />
             </button>
           </div>
         </header>

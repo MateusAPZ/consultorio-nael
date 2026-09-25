@@ -13,7 +13,8 @@ const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(morgan('dev'));
 
 // Static files for client (if built)
@@ -21,6 +22,31 @@ const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientDistPath));
 
 // --- API ROUTES ---
+
+// Login / Autenticação Exclusiva Dr. Nael
+app.post('/api/login', (req, res) => {
+  const { username, password } = req.body || {};
+  const userTrim = (username || '').trim();
+  const passTrim = (password || '').trim();
+
+  if (userTrim === 'Naelsrc' && passTrim === '33385458vr') {
+    return res.json({
+      success: true,
+      token: 'nael_auth_' + Buffer.from('Naelsrc:33385458vr').toString('base64'),
+      user: {
+        nome: 'Dr. Nael Santos',
+        usuario: 'Naelsrc',
+        cro: 'CRO-SP 104.921',
+        cargo: 'Cirurgião-Dentista Responsável'
+      }
+    });
+  }
+
+  return res.status(401).json({
+    success: false,
+    error: 'Usuário ou senha incorretos. Acesso restrito ao Dr. Nael.'
+  });
+});
 
 // Health & System Info
 app.get('/api/status', (req, res) => {
@@ -132,6 +158,37 @@ app.post('/api/pacientes/:id/odontograma', (req, res) => {
     res.json(odontograma);
   } catch (err) {
     res.status(500).json({ error: 'Erro ao atualizar odontograma' });
+  }
+});
+
+// Fotos e Exames Clínicos do Paciente (Prontuário)
+app.post('/api/pacientes/:id/fotos', (req, res) => {
+  try {
+    const { imagem, titulo, categoria, notas, data } = req.body || {};
+    if (!imagem) {
+      return res.status(400).json({ error: 'Nenhuma imagem foi informada.' });
+    }
+    const foto = db.addFoto(req.params.id, { imagem, titulo, categoria, notas, data });
+    if (!foto) {
+      return res.status(404).json({ error: 'Paciente não encontrado.' });
+    }
+    res.status(201).json(foto);
+  } catch (err) {
+    console.error('Erro ao salvar foto:', err);
+    res.status(500).json({ error: 'Erro ao salvar foto no prontuário' });
+  }
+});
+
+app.delete('/api/pacientes/:id/fotos/:fotoId', (req, res) => {
+  try {
+    const ok = db.deleteFoto(req.params.id, req.params.fotoId);
+    if (!ok) {
+      return res.status(404).json({ error: 'Foto não encontrada.' });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Erro ao excluir foto:', err);
+    res.status(500).json({ error: 'Erro ao excluir foto' });
   }
 });
 

@@ -1,6 +1,20 @@
 const API_BASE = '/api';
 
 export const api = {
+  // Autenticação
+  login: async (username, password) => {
+    const res = await fetch(`${API_BASE}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Falha ao autenticar.');
+    }
+    return data;
+  },
+
   // Dashboard
   getDashboard: async () => {
     const res = await fetch(`${API_BASE}/dashboard`);
@@ -66,6 +80,27 @@ export const api = {
     });
     if (!res.ok) throw new Error('Falha ao atualizar dente no odontograma');
     return res.json();
+  },
+
+  // Fotos do Paciente (Prontuário)
+  addFoto: async (pacienteId, data) => {
+    const res = await fetch(`${API_BASE}/pacientes/${pacienteId}/fotos`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Falha ao salvar foto');
+    return result;
+  },
+
+  deleteFoto: async (pacienteId, fotoId) => {
+    const res = await fetch(`${API_BASE}/pacientes/${pacienteId}/fotos/${fotoId}`, {
+      method: 'DELETE'
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'Falha ao excluir foto');
+    return result;
   },
 
   // Agendamentos

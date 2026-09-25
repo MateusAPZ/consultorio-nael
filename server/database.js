@@ -289,6 +289,7 @@ class Database {
       },
       odontograma: pacienteData.odontograma || {},
       evolucoes: [],
+      fotos: [],
       criadoEm: getTodayString()
     };
 
@@ -396,6 +397,45 @@ class Database {
 
     this.saveData(data);
     return paciente.odontograma;
+  }
+
+  // --- FOTOS DO PACIENTE (PRONTUÁRIO) ---
+  addFoto(pacienteId, fotoData) {
+    const data = this.loadData();
+    const paciente = data.pacientes.find(p => p.id === pacienteId);
+    if (!paciente) return null;
+
+    if (!paciente.fotos) paciente.fotos = [];
+
+    const newFoto = {
+      id: 'foto_' + Date.now(),
+      imagem: fotoData.imagem,
+      titulo: fotoData.titulo || 'Foto Clínica',
+      categoria: fotoData.categoria || 'Intraoral',
+      data: fotoData.data || getTodayString(),
+      hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      notas: fotoData.notas || '',
+      profissional: fotoData.profissional || 'Dr. Nael Santos'
+    };
+
+    paciente.fotos.unshift(newFoto);
+    this.saveData(data);
+    return newFoto;
+  }
+
+  deleteFoto(pacienteId, fotoId) {
+    const data = this.loadData();
+    const paciente = data.pacientes.find(p => p.id === pacienteId);
+    if (!paciente || !paciente.fotos) return false;
+
+    const initialLength = paciente.fotos.length;
+    paciente.fotos = paciente.fotos.filter(f => f.id !== fotoId);
+
+    if (paciente.fotos.length !== initialLength) {
+      this.saveData(data);
+      return true;
+    }
+    return false;
   }
 
   // --- AGENDAMENTOS ---

@@ -2,20 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, User, Phone, Mail, MapPin, ShieldAlert, HeartPulse, 
   Calendar, DollarSign, Plus, Printer, FileText, CheckCircle2, 
-  AlertTriangle, Clock, MessageSquare, AlertCircle, Edit, ExternalLink
+  AlertTriangle, Clock, MessageSquare, AlertCircle, Edit, ExternalLink,
+  Camera, Image as ImageIcon, Trash2, Download, Maximize2, X
 } from 'lucide-react';
 import Odontograma from './Odontograma';
 import ModalNovaEvolucao from './ModalNovaEvolucao';
 import ModalBaixaPagamento from './ModalBaixaPagamento';
+import ModalTirarFoto from './ModalTirarFoto';
 import { formatCurrency, formatDateBR, calculateAge, getWhatsAppLink } from '../utils/formatters';
 import { api } from '../services/api';
 
 export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamento }) {
   const [paciente, setPaciente] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('odontograma'); // 'odontograma' | 'anamnese' | 'evolucoes' | 'financeiro' | 'agendamentos'
+  const [activeTab, setActiveTab] = useState('odontograma'); // 'odontograma' | 'anamnese' | 'evolucoes' | 'fotos' | 'financeiro' | 'agendamentos'
   const [isNovaEvolucaoOpen, setIsNovaEvolucaoOpen] = useState(false);
   const [pagamentoParaBaixa, setPagamentoParaBaixa] = useState(null);
+  const [isTirarFotoOpen, setIsTirarFotoOpen] = useState(false);
+  const [selectedFotoLightbox, setSelectedFotoLightbox] = useState(null);
+  const [filtroCategoriaFoto, setFiltroCategoriaFoto] = useState('todas');
 
   const fetchPaciente = async () => {
     try {
@@ -57,6 +62,28 @@ export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamen
       await fetchPaciente();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handlePhotoSaved = async (dadosFoto) => {
+    try {
+      await api.addFoto(pacienteId, dadosFoto);
+      await fetchPaciente();
+    } catch (err) {
+      console.error('Erro ao salvar foto:', err);
+    }
+  };
+
+  const handleDeleteFoto = async (fotoId) => {
+    if (!window.confirm('Tem certeza que deseja excluir esta foto do prontuário?')) return;
+    try {
+      await api.deleteFoto(pacienteId, fotoId);
+      if (selectedFotoLightbox?.id === fotoId) {
+        setSelectedFotoLightbox(null);
+      }
+      await fetchPaciente();
+    } catch (err) {
+      console.error('Erro ao excluir foto:', err);
     }
   };
 
@@ -281,6 +308,18 @@ export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamen
         </button>
 
         <button
+          onClick={() => setActiveTab('fotos')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl border-b-2 transition-all whitespace-nowrap ${
+            activeTab === 'fotos'
+              ? 'border-sky-600 text-sky-600 bg-white shadow-sm'
+              : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'
+          }`}
+        >
+          <Camera className="w-4 h-4" />
+          <span>Fotos & Exames ({(paciente.fotos || []).length})</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('financeiro')}
           className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-t-xl border-b-2 transition-all whitespace-nowrap ${
             activeTab === 'financeiro'
@@ -496,6 +535,157 @@ export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamen
           </div>
         )}
 
+        {/* TAB: FOTOS & EXAMES CLÍNICOS */}
+        {activeTab === 'fotos' && (
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-sky-600" />
+                  <span>Galeria de Fotos Clínicas & Exames</span>
+                </h3>
+                <p className="text-xs text-slate-500">
+                  Fotos intraorais, antes e depois, raio-x e registros estéticos de <strong>{paciente.nome}</strong>
+                </p>
+              </div>
+
+              <button
+                onClick={() => setIsTirarFotoOpen(true)}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs shadow-md transition-all self-start sm:self-center"
+              >
+                <Camera className="w-4 h-4" />
+                <span>Tirar Foto / Adicionar</span>
+              </button>
+            </div>
+
+            {/* Filter Pills */}
+            {(paciente.fotos || []).length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 p-1 bg-white rounded-xl border border-slate-200 shadow-sm">
+                {[
+                  { id: 'todas', label: 'Todas as Fotos' },
+                  { id: 'Intraoral', label: '🦷 Intraoral' },
+                  { id: 'AntesDepois', label: '⚖️ Antes & Depois' },
+                  { id: 'Radiografia', label: '🩻 Radiografias' },
+                  { id: 'PerfilFace', label: '👤 Face / Perfil' },
+                  { id: 'Documento', label: '📄 Exames' }
+                ].map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setFiltroCategoriaFoto(cat.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                      filtroCategoriaFoto === cat.id
+                        ? 'bg-sky-600 text-white shadow-sm'
+                        : 'text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Photos Grid */}
+            {(!paciente.fotos || paciente.fotos.length === 0) ? (
+              <div className="p-12 text-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+                <div className="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center mx-auto mb-3">
+                  <Camera className="w-7 h-7" />
+                </div>
+                <h4 className="text-sm font-bold text-slate-800">Nenhuma foto registrada</h4>
+                <p className="text-xs text-slate-500 max-w-md mx-auto mt-1 mb-4">
+                  Tire fotos do sorriso, dentes, restaurações ou envie exames e radiografias para acompanhar a evolução clínica do paciente.
+                </p>
+                <button
+                  onClick={() => setIsTirarFotoOpen(true)}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-sky-600 hover:bg-sky-700 rounded-xl shadow-md transition-colors"
+                >
+                  <Camera className="w-4 h-4" />
+                  <span>Tirar Primeira Foto do Paciente</span>
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {(paciente.fotos || [])
+                  .filter(f => filtroCategoriaFoto === 'todas' || f.categoria === filtroCategoriaFoto)
+                  .map((foto) => (
+                    <div 
+                      key={foto.id}
+                      className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md hover:border-sky-300 transition-all flex flex-col group"
+                    >
+                      {/* Image Thumbnail with Overlay */}
+                      <div className="relative aspect-[4/3] bg-slate-950 overflow-hidden cursor-pointer" onClick={() => setSelectedFotoLightbox(foto)}>
+                        <img
+                          src={foto.imagem}
+                          alt={foto.titulo || 'Foto do Paciente'}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+
+                        {/* Category Badge */}
+                        <div className="absolute top-2.5 left-2.5">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-900/80 backdrop-blur-md text-white border border-white/20 shadow-sm">
+                            {foto.categoria === 'Intraoral' ? '🦷 Intraoral' :
+                             foto.categoria === 'AntesDepois' ? '⚖️ Antes & Depois' :
+                             foto.categoria === 'Radiografia' ? '🩻 Radiografia' :
+                             foto.categoria === 'PerfilFace' ? '👤 Face' : '📄 Exame'}
+                          </span>
+                        </div>
+
+                        {/* Hover Overlay Buttons */}
+                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setSelectedFotoLightbox(foto); }}
+                            className="p-2 rounded-xl bg-white/90 hover:bg-white text-slate-800 shadow-md transition-transform hover:scale-110"
+                            title="Visualizar em Tela Cheia"
+                          >
+                            <Maximize2 className="w-4 h-4" />
+                          </button>
+                          <a
+                            href={foto.imagem}
+                            download={`foto-${paciente.nome.replace(/\s+/g, '_')}-${foto.data}.jpg`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="p-2 rounded-xl bg-white/90 hover:bg-white text-slate-800 shadow-md transition-transform hover:scale-110"
+                            title="Baixar Foto"
+                          >
+                            <Download className="w-4 h-4" />
+                          </a>
+                          <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); handleDeleteFoto(foto.id); }}
+                            className="p-2 rounded-xl bg-rose-600/90 hover:bg-rose-600 text-white shadow-md transition-transform hover:scale-110"
+                            title="Excluir Foto"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Card Info */}
+                      <div className="p-3.5 flex-1 flex flex-col justify-between">
+                        <div>
+                          <h4 
+                            onClick={() => setSelectedFotoLightbox(foto)}
+                            className="text-xs font-bold text-slate-900 hover:text-sky-600 cursor-pointer line-clamp-1"
+                          >
+                            {foto.titulo || 'Foto Clínica'}
+                          </h4>
+                          <span className="text-[10px] text-slate-400 block mt-0.5">
+                            {formatDateBR(foto.data)} {foto.hora ? `às ${foto.hora}` : ''}
+                          </span>
+                        </div>
+
+                        {foto.notas && (
+                          <p className="text-[11px] text-slate-500 line-clamp-2 mt-2 pt-2 border-t border-slate-100">
+                            {foto.notas}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* TAB 4: FINANCEIRO DO PACIENTE */}
         {activeTab === 'financeiro' && (
           <div className="space-y-4">
@@ -692,6 +882,82 @@ export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamen
           pagamento={pagamentoParaBaixa}
           onConfirmed={handleBaixaConfirmed}
         />
+      )}
+
+      {/* Modal Tirar Foto / Upload */}
+      {isTirarFotoOpen && (
+        <ModalTirarFoto
+          isOpen={isTirarFotoOpen}
+          onClose={() => setIsTirarFotoOpen(false)}
+          paciente={paciente}
+          onPhotoSaved={handlePhotoSaved}
+        />
+      )}
+
+      {/* Lightbox / Visualizador de Foto em Tela Cheia */}
+      {selectedFotoLightbox && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-fadeIn"
+          onClick={() => setSelectedFotoLightbox(null)}
+        >
+          <div 
+            className="relative max-w-4xl w-full bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Top Bar */}
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-900 border-b border-slate-800 text-white">
+              <div>
+                <h3 className="text-base font-bold text-white">{selectedFotoLightbox.titulo || 'Foto Clínica'}</h3>
+                <span className="text-xs text-slate-400">
+                  {formatDateBR(selectedFotoLightbox.data)} {selectedFotoLightbox.hora ? `às ${selectedFotoLightbox.hora}` : ''} • {selectedFotoLightbox.categoria}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={selectedFotoLightbox.imagem}
+                  download={`foto-${paciente.nome.replace(/\s+/g, '_')}-${selectedFotoLightbox.data}.jpg`}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Baixar Foto</span>
+                </a>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteFoto(selectedFotoLightbox.id)}
+                  className="p-2 rounded-xl text-rose-400 hover:text-white hover:bg-rose-600 transition-colors"
+                  title="Excluir Foto"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedFotoLightbox(null)}
+                  className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors ml-2"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Image Preview Container */}
+            <div className="flex-1 overflow-auto bg-black flex items-center justify-center p-4">
+              <img
+                src={selectedFotoLightbox.imagem}
+                alt={selectedFotoLightbox.titulo || 'Foto Clínica'}
+                className="max-h-[65vh] max-w-full object-contain rounded-lg shadow-lg"
+              />
+            </div>
+
+            {/* Bottom Details */}
+            {selectedFotoLightbox.notas && (
+              <div className="p-4 bg-slate-950 border-t border-slate-800 text-xs text-slate-300">
+                <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px] block mb-1">Anotações Clínicas:</span>
+                <p>{selectedFotoLightbox.notas}</p>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
