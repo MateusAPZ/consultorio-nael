@@ -102,6 +102,22 @@ export default function App() {
     await loadInitialData();
   };
 
+  const handleDeletePaciente = async (id, nome) => {
+    if (!window.confirm(`Tem certeza que deseja excluir o paciente "${nome}"?\n\nEsta ação removerá todos os dados do prontuário, consultas e histórico financeiro associados.`)) {
+      return;
+    }
+    try {
+      await api.deletePaciente(id);
+      await loadInitialData();
+      if (selectedPacienteId === id) {
+        setSelectedPacienteId(null);
+        setCurrentView('pacientes');
+      }
+    } catch (err) {
+      alert('Erro ao excluir paciente: ' + (err.message || 'Erro inesperado'));
+    }
+  };
+
   const totalAtrasadosCount = stats?.quantidadeAtrasados || 0;
   const agendamentosHojeCount = stats?.agendamentosHojeTotal || 0;
 
@@ -316,6 +332,7 @@ export default function App() {
                   onSelectPaciente={handleSelectPaciente}
                   onOpenNovoPaciente={() => setIsNovoPacienteOpen(true)}
                   onOpenNovoAgendamento={handleOpenAgendamento}
+                  onDeletePaciente={handleDeletePaciente}
                 />
               )}
 
@@ -324,6 +341,7 @@ export default function App() {
                   pacienteId={selectedPacienteId}
                   onBack={() => setCurrentView('pacientes')}
                   onOpenNovoAgendamento={handleOpenAgendamento}
+                  onDeletePaciente={handleDeletePaciente}
                 />
               )}
 

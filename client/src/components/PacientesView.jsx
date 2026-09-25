@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Users, Search, UserPlus, Phone, Calendar, 
-  AlertTriangle, CheckCircle2, MessageSquare, ChevronRight, FileText, ArrowRight
+  AlertTriangle, CheckCircle2, MessageSquare, ChevronRight, FileText, ArrowRight, Trash2
 } from 'lucide-react';
 import { formatCurrency, formatDateBR, calculateAge, getWhatsAppLink } from '../utils/formatters';
 
@@ -9,7 +9,8 @@ export default function PacientesView({
   pacientes = [], 
   onSelectPaciente, 
   onOpenNovoPaciente,
-  onOpenNovoAgendamento 
+  onOpenNovoAgendamento,
+  onDeletePaciente
 }) {
   const [busca, setBusca] = useState('');
 
@@ -176,6 +177,16 @@ export default function PacientesView({
                     >
                       <Calendar className="w-4 h-4" />
                     </button>
+                    {onDeletePaciente && (
+                      <button
+                        type="button"
+                        onClick={() => onDeletePaciente(paciente.id, paciente.nome)}
+                        className="p-2 rounded-xl text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-colors"
+                        title="Excluir Paciente"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
 
                   <button

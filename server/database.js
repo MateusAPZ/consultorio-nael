@@ -338,6 +338,8 @@ class Database {
   deletePaciente(id) {
     const data = this.loadData();
     data.pacientes = data.pacientes.filter(p => p.id !== id);
+    data.agendamentos = (data.agendamentos || []).filter(a => a.pacienteId !== id);
+    data.pagamentos = (data.pagamentos || []).filter(p => p.pacienteId !== id);
     this.saveData(data);
     return true;
   }

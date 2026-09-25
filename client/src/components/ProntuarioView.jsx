@@ -12,7 +12,7 @@ import ModalTirarFoto from './ModalTirarFoto';
 import { formatCurrency, formatDateBR, calculateAge, getWhatsAppLink } from '../utils/formatters';
 import { api } from '../services/api';
 
-export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamento }) {
+export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamento, onDeletePaciente }) {
   const [paciente, setPaciente] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('odontograma'); // 'odontograma' | 'anamnese' | 'evolucoes' | 'fotos' | 'financeiro' | 'agendamentos'
@@ -91,6 +91,22 @@ export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamen
     window.print();
   };
 
+  const handleDeleteThisPaciente = async () => {
+    if (onDeletePaciente) {
+      onDeletePaciente(paciente.id, paciente.nome);
+    } else {
+      if (!window.confirm(`Tem certeza que deseja excluir o paciente "${paciente.nome}"?\n\nEsta ação removerá todos os dados do prontuário, consultas e histórico financeiro.`)) {
+        return;
+      }
+      try {
+        await api.deletePaciente(pacienteId);
+        if (onBack) onBack();
+      } catch (err) {
+        alert('Erro ao excluir paciente: ' + (err.message || 'Erro inesperado'));
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px]">
@@ -162,6 +178,14 @@ export default function ProntuarioView({ pacienteId, onBack, onOpenNovoAgendamen
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>Agendar Consulta</span>
+          </button>
+          <button
+            onClick={handleDeleteThisPaciente}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-colors"
+            title="Excluir este paciente"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Excluir Paciente</span>
           </button>
         </div>
       </div>
